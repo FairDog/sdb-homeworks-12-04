@@ -26,8 +26,8 @@
 
 [main](main.tf)
 
-![Скриншот](https://github.com/FairDog/sflt-homeworks/blob/main/img/1.png)
+![Скриншот](https://github.com/FairDog/sflt-homeworks-4/blob/main/img/1.png)
 
-![Скриншот](https://github.com/FairDog/sflt-homeworks/blob/main/img/2.png)
+![Скриншот](https://github.com/FairDog/sflt-homeworks-4/blob/main/img/2.png)
 
-![Скриншот](https://github.com/FairDog/sflt-homeworks/blob/main/img/3.png)
+![Скриншот](https://github.com/FairDog/sflt-homeworks-4/blob/main/img/3.png)
