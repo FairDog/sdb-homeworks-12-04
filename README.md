@@ -1,40 +1,50 @@
-# Домашнее задание к занятию "`ELK`" - `Шаталов Леонид Юрьевич`
+# Домашнее задание к занятию "SQL. Часть 2`" - `Шаталов Леонид Юрьевич`
 
-## Задание 1. Elasticsearch
+## Задание 1.
 
-Задание 1. Elasticsearch
-Установите и запустите Elasticsearch, после чего поменяйте параметр cluster_name на случайный.
+Одним запросом получите информацию о магазине, в котором обслуживается более 300 покупателей, и выведите в результат следующую информацию:
 
-Приведите скриншот команды 'curl -X GET 'localhost:9200/_cluster/health?pretty', сделанной на сервере с установленным Elasticsearch. Где будет виден нестандартный cluster_name.
+фамилия и имя сотрудника из этого магазина;
+город нахождения магазина;
+количество пользователей, закреплённых в этом магазине.
 
-![Скриншот](https://github.com/FairDog/sdb-homeworks-11-03/blob/main/img/1.png)
+```
+SELECT
+    s.first_name AS имя,
+    s.last_name  AS фамилия,
+    ci.city      AS город,
+    COUNT(c.customer_id) AS количество_покупателей
+FROM store st
+JOIN staff s    ON st.manager_staff_id = s.staff_id
+JOIN address a  ON st.address_id = a.address_id
+JOIN city ci    ON a.city_id = ci.city_id
+JOIN customer c ON c.store_id = st.store_id
+GROUP BY st.store_id, s.first_name, s.last_name, ci.city
+HAVING COUNT(c.customer_id) > 300;
+```
+
+## Задание 2
+
+Получите количество фильмов, продолжительность которых больше средней продолжительности всех фильмов.
+
+```
+SELECT COUNT(*) AS количество_фильмов
+FROM film
+WHERE length > (SELECT AVG(length) FROM film);
+```
 
 
-## Задание 2. Kibana
+## Задание 3
 
-Задание 2. Kibana
-Установите и запустите Kibana.
+Получите информацию, за какой месяц была получена наибольшая сумма платежей, и добавьте информацию по количеству аренд за этот месяц.
 
-Приведите скриншот интерфейса Kibana на странице http://<ip вашего сервера>:5601/app/dev_tools#/console, где будет выполнен запрос GET /_cluster/health?pretty.
-
-
-![Скриншот](https://github.com/FairDog/sdb-homeworks-11-03/blob/main/img/2.png)
-
-
-## Задание 3. Logstash
-
-Установите и запустите Logstash и Nginx. С помощью Logstash отправьте access-лог Nginx в Elasticsearch.
-
-Приведите скриншот интерфейса Kibana, на котором видны логи Nginx.
-
-
-![Скриншот](https://github.com/FairDog/sdb-homeworks-11-03/blob/main/img/3.png)
-
-
-## Задание 4. Filebeat.
-
-Установите и запустите Filebeat. Переключите поставку логов Nginx с Logstash на Filebeat.
-
-Приведите скриншот интерфейса Kibana, на котором видны логи Nginx, которые были отправлены через Filebeat.
-
-![Скриншот](https://github.com/FairDog/sdb-homeworks-11-03/blob/main/img/4.png)
+```
+SELECT DATE_TRUNC('month', p.payment_date) AS месяц,
+       SUM(p.amount)  AS сумма_платежей,
+       COUNT(r.rental_id) AS количество_аренд
+FROM payment p
+JOIN rental r ON r.rental_id = p.rental_id
+GROUP BY DATE_TRUNC('month', p.payment_date)
+ORDER BY SUM(p.amount) DESC
+LIMIT 1;
+```
